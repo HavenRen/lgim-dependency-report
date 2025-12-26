@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>LGIM外部依赖分析报告.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="%F0%9F%98%A4-lgim-%E5%A4%96%E9%83%A8%E4%BE%9D%E8%B5%96%E5%85%A8%E6%99%AF%E5%9B%BE">😤 LGIM 外部依赖全景图</h1>
+<h2 id="1-%E6%B8%B8%E6%88%8F%E4%B8%9A%E5%8A%A1-handler-%E4%BE%9D%E8%B5%96%E6%9C%80%E5%A4%B4%E7%96%BC%E7%9A%84%E9%83%A8%E5%88%86">1. 游戏业务 Handler 依赖（最头疼的部分）</h2>
+<h3 id="1-userhandler---%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF">(1) UserHandler - 用户信息</h3>
+<p><strong>被调用 60+ 次</strong> -- 在 LimHelper 层大量调用</p>
+<pre class="hljs"><code><div>UserHandler:GetPlayerId()           <span class="hljs-comment">-- 获取玩家ID (40+次)</span>
+UserHandler:GetPlayerName()         <span class="hljs-comment">-- 获取玩家名称</span>
+UserHandler:GetPlayerAvatarUrl()    <span class="hljs-comment">-- 获取头像URL</span>
+UserHandler:GetPlayerAvatarFrameUrl() <span class="hljs-comment">-- 获取头像框</span>
+UserHandler:GetVipLevel()           <span class="hljs-comment">-- VIP等级</span>
+UserHandler:GetOriServerId()        <span class="hljs-comment">-- 原始服务器ID</span>
+UserHandler:GetAllianceId()         <span class="hljs-comment">-- 联盟ID</span>
+UserHandler:GetAllianceName()       <span class="hljs-comment">-- 联盟名称</span>
+UserHandler:IsInAlliance()          <span class="hljs-comment">-- 是否在联盟中</span>
+UserHandler:IsInTopAlliance()       <span class="hljs-comment">-- 是否在顶级联盟</span>
+UserHandler:GetTopAllianceName()    <span class="hljs-comment">-- 顶级联盟名称</span>
+UserHandler:IsInLegion()            <span class="hljs-comment">-- 是否在军团</span>
+UserHandler:GetLegionName()         <span class="hljs-comment">-- 军团名称</span>
+UserHandler:GetUserChatInfo()       <span class="hljs-comment">-- 获取聊天信息</span>
+</div></code></pre>
+<p><strong>问题：</strong></p>
+<ul>
+<li>❌ 散布在 15+ 个文件中</li>
+<li>❌ 无接口抽象，直接硬编码调用</li>
+<li>❌ 新项目必须实现完全相同的接口名称</li>
+</ul>
+<hr>
+<h3 id="2-alliancehandler---%E8%81%94%E7%9B%9F%E4%BF%A1%E6%81%AF">(2) AllianceHandler - 联盟信息</h3>
+<p><strong>被调用 20+ 次</strong></p>
+<pre class="hljs"><code><div>AllianceHandler:GetMyAllianceId()
+AllianceHandler:GetMyAllianceName()
+AllianceHandler:GetMyAllianceAvatar()
+AllianceHandler:GetAllianceBaseInfo()
+AllianceHandler:IsPresidentOrOfficerOrR4()  <span class="hljs-comment">-- 权限检查</span>
+</div></code></pre>
+<hr>
+<h3 id="3-avatarhandler---%E5%A4%B4%E5%83%8F%E7%AE%A1%E7%90%86">(3) AvatarHandler - 头像管理</h3>
+<p><strong>被调用 15+ 次</strong></p>
+<pre class="hljs"><code><div>AvatarHandler:GenAvatarSavedJson()          <span class="hljs-comment">-- 生成头像JSON</span>
+AvatarHandler:GetPCCustomEmotionCfgByKey()  <span class="hljs-comment">-- 自定义表情</span>
+AvatarHandler:SetLocalCache()               <span class="hljs-comment">-- 本地缓存</span>
+AvatarHandler:ChangeAvatarReview()          <span class="hljs-comment">-- 头像审核</span>
+AvatarHandler:AvatarStringIsJson()          <span class="hljs-comment">-- 判断头像格式</span>
+AvatarHandler:GetCdnUrlByKey()              <span class="hljs-comment">-- CDN URL</span>
+AvatarHandler:OnReqPhotoUrlFromSDK()        <span class="hljs-comment">-- 请求上传URL</span>
+</div></code></pre>
+<hr>
+<h3 id="4-lilithchatsdkhandler---%E8%81%8A%E5%A4%A9%E9%A2%91%E9%81%93%E7%AE%A1%E7%90%86">(4) LilithChatSDKHandler - 聊天频道管理</h3>
+<p><strong>被调用 40+ 次</strong></p>
+<pre class="hljs"><code><div>LilithChatSDKHandler:GetKingdonChanelID()      <span class="hljs-comment">-- 王国频道ID</span>
+LilithChatSDKHandler:GetAllianceChanelID()     <span class="hljs-comment">-- 联盟频道ID</span>
+LilithChatSDKHandler:GetSeasonChanelID()       <span class="hljs-comment">-- 赛季频道ID</span>
+LilithChatSDKHandler:GetLegionChanelID()       <span class="hljs-comment">-- 军团频道ID</span>
+LilithChatSDKHandler:GetCampChanelID()         <span class="hljs-comment">-- 阵营频道ID</span>
+LilithChatSDKHandler:GetTopKvkChanelID()       <span class="hljs-comment">-- 巅峰战场频道ID</span>
+LilithChatSDKHandler:GetTopAllianceChanelID()  <span class="hljs-comment">-- 顶级联盟频道ID</span>
+LilithChatSDKHandler:GetLostLandChanelIDs()    <span class="hljs-comment">-- 失地频道ID列表</span>
+LilithChatSDKHandler:GetTeamRelocateServerChanelID() <span class="hljs-comment">-- 迁服频道ID</span>
+LilithChatSDKHandler:GetOriKingdomChanelID()   <span class="hljs-comment">-- 原始王国频道ID</span>
+LilithChatSDKHandler:GetAsAllyChannelID()      <span class="hljs-comment">-- 盟友频道ID</span>
+LilithChatSDKHandler:GetChannelID()            <span class="hljs-comment">-- 通用获取频道ID</span>
+LilithChatSDKHandler:GetLimConvType()          <span class="hljs-comment">-- 获取会话类型</span>
+LilithChatSDKHandler:GetAllianceChannelName()  <span class="hljs-comment">-- 联盟频道名称</span>
+LilithChatSDKHandler:HasGroupById()            <span class="hljs-comment">-- 判断群组是否存在</span>
+LilithChatSDKHandler:CanGotoHref()             <span class="hljs-comment">-- 能否跳转超链接</span>
+LilithChatSDKHandler:NeedForceUpdateGuide()    <span class="hljs-comment">-- 是否需要强制更新引导</span>
+LilithChatSDKHandler:HintIMLocked()            <span class="hljs-comment">-- IM锁定提示</span>
+LilithChatSDKHandler:RemoveLanguageConvChannel() <span class="hljs-comment">-- 移除语言频道</span>
+LilithChatSDKHandler:UpdateLanguageConvChannel() <span class="hljs-comment">-- 更新语言频道</span>
+</div></code></pre>
+<p><strong>问题：</strong></p>
+<ul>
+<li>❌ 硬编码依赖导致无法复用</li>
+</ul>
+<hr>
+<h3 id="5-%E5%85%B6%E4%BB%96%E4%B8%9A%E5%8A%A1-handler">(5) 其他业务 Handler</h3>
+<pre class="hljs"><code><div>// 玩家信息
+PlayerInfoHandler:GetPlayerInfo()
+PlayerInfoHandler:SetNewAvatar()
+
+// 城市建筑
+CityBuildHandler:GetMyCityLevel()
+CityBuildHandler:RemoveCitySpaceScreenShotPic()
+
+// 权限管理
+CustomPermissionHandler:IsPermissionEnable()
+CustomPermissionHandler:IsChatEnable()
+
+// 皮肤管理
+SkinHandler:GetCurLGIMSkinId()
+SkinHandler:GetCurLGIMSkinTag()
+SkinHandler:CheckInitLGIMSkin()
+SkinHandler:SetInitLGIMSkin()
+
+// 颜色方案
+ColorPlanHandler:SetColorPlan()
+
+// 任务系统
+QuestHandler:GetStrategicState()
+QuestHandler:RequestQuestFinished()
+
+// 红包系统
+RedEnvelopesHandler:RedIdToIMID()
+
+// 团队抽卡
+TeamGachaHandler:IMHandlerShowTeamGachaInvitation()
+
+// 迁服
+ImmigrateHandler:GetServerSeasonName()
+
+// 验证码
+CaptchaHandler:GetLanguage()
+CaptchaHandler:GetApiServer()
+CaptchaHandler:CaptchaVerifyReq()
+
+// 军团
+LegionHandler:IsMainAlliance()
+
+// 巅峰战场
+TopKVKHandler:IsInTopKVK()
+
+// 地图战斗
+MapWarHandler:IsInMapWarGame()
+</div></code></pre>
+<hr>
+<h2 id="2-unity-%E5%BC%95%E6%93%8E%E4%BE%9D%E8%B5%96">2. Unity 引擎依赖</h2>
+<pre class="hljs"><code><div>// UI 组件
+UnityEngine.UI.Text
+UnityEngine.UI.Image
+UnityEngine.UI.Button
+UnityEngine.UI.ScrollRect
+UnityEngine.UI.InputField
+UnityEngine.UI.LayoutElement
+UnityEngine.UI.ContentSizeFitter
+UnityEngine.RectTransform
+
+// 核心组件
+UnityEngine.Screen
+UnityEngine.Microphone
+UnityEngine.Vector2
+UnityEngine.Vector3
+UnityEngine.Color
+UnityEngine.GameObject
+UnityEngine.Transform
+UnityEngine.Canvas
+UnityEngine.Input
+
+// 自定义组件
+LinkedListView        <span class="hljs-comment">-- 链表视图</span>
+LimHelperLua.ListView <span class="hljs-comment">-- 列表视图</span>
+KMInputHandler        <span class="hljs-comment">-- 键盘输入处理</span>
+</div></code></pre>
+<hr>
+<h2 id="3-ui-%E7%B3%BB%E7%BB%9F%E4%BE%9D%E8%B5%96">3. UI 系统依赖</h2>
+<pre class="hljs"><code><div>// UIObjectManager - 所有 UI 文件都依赖
+UIObjectManager:GetUIObject(<span class="hljs-string">"ChatMainPanel"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"CommonWarningTips"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"ChatFriendListPanel"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"ChatImagePreview"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"ChatConvSetting"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"FluxScripMainPage"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"AllUIMailMainPage"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"CommonBackground"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"CityUIPlayerInfo"</span>)
+UIObjectManager:GetUIObject(<span class="hljs-string">"AuthorityPopup"</span>)
+// ... 还有 <span class="hljs-number">20</span>+ 个
+
+// UIHelper - UI 工具
+UIHelper:SetBtnListener()
+UIHelper:SetText()
+UIHelper:OpenUI()
+UIHelper:CloseUI()
+UIHelper:ShowCommonTips()
+UIHelper:PlayAnimation()
+UIHelper:SetActiveSafely()
+</div></code></pre>
+<hr>
+<h2 id="4-%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%BB%9F%E4%BE%9D%E8%B5%96">4. 事件系统依赖</h2>
+<pre class="hljs"><code><div>// EventDispatcher - 被调用 <span class="hljs-number">115</span>+ 次
+EventDispatcher:RegisterEvent()
+EventDispatcher:DisPatchEvent()
+EventDispatcher:UnRegisterEvent()
+
+// 事件类型（<span class="hljs-number">50</span>+ 个）
+EVENT_REFRESH_CHAT_MSG           <span class="hljs-comment">-- 刷新消息</span>
+EVENT_REFRESH_CHAT_CONVS         <span class="hljs-comment">-- 刷新会话列表</span>
+EVENT_REFRESH_CHAT_USER          <span class="hljs-comment">-- 刷新用户信息</span>
+EVENT_REFRESH_CHAT_FRIEND        <span class="hljs-comment">-- 刷新好友</span>
+EVENT_REFRESH_CHAT_REDHINTS      <span class="hljs-comment">-- 刷新红点</span>
+EVENT_SENDED_CHAT_MSG            <span class="hljs-comment">-- 消息已发送</span>
+EVENT_CHANGE_CHAT_MUTE           <span class="hljs-comment">-- 免打扰状态变化</span>
+EVENT_CHANGE_CHAT_CONV           <span class="hljs-comment">-- 会话切换</span>
+EVENT_SHOW_CHAT_MAIN             <span class="hljs-comment">-- 显示聊天主界面</span>
+EVENT_HIDE_CHAT_MAIN             <span class="hljs-comment">-- 隐藏聊天主界面</span>
+EVENT_LGIM_LOGIN_SUCCESS         <span class="hljs-comment">-- 登录成功</span>
+EVENT_LGIM_DISCONNECT            <span class="hljs-comment">-- 断线</span>
+EVENT_IM_OPEN_REDENVELOPES       <span class="hljs-comment">-- 打开红包</span>
+EVENT_ALLIANCE_CHAT_DATA_COMING  <span class="hljs-comment">-- 联盟聊天数据</span>
+EVENT_HORN_NEW_RECEIVED          <span class="hljs-comment">-- 大喇叭</span>
+EVENT_VOICE_CHAT_*               <span class="hljs-comment">-- 语音聊天系列</span>
+EVENT_PLAYER_PHOTO_UPLOADED_*    <span class="hljs-comment">-- 照片上传系列</span>
+EVENT_CAPTCHA_SDK_BACK           <span class="hljs-comment">-- 验证码回调</span>
+EVENT_IAP_SKUITEMS_CHANGED       <span class="hljs-comment">-- IAP 商品变化</span>
+// ... 还有很多
+</div></code></pre>
+<hr>
+<h2 id="5-%E5%85%A8%E5%B1%80%E5%B7%A5%E5%85%B7%E7%B1%BB%E4%BE%9D%E8%B5%96">5. 全局工具类依赖</h2>
+<pre class="hljs"><code><div>// Utils - 工具类
+Utils:GetText()                  <span class="hljs-comment">-- 多语言文本</span>
+Utils:GetTableStr()              <span class="hljs-comment">-- 表格转字符串</span>
+Utils:Split()                    <span class="hljs-comment">-- 字符串分割</span>
+Utils:IsWin32()                  <span class="hljs-comment">-- 平台判断</span>
+Utils:GetGDConstValueByKey()     <span class="hljs-comment">-- 游戏配置</span>
+Utils:RealServerId2DisplayServerId() <span class="hljs-comment">-- 服务器ID转换</span>
+Utils:IsInWorldMapScene()        <span class="hljs-comment">-- 场景判断</span>
+Utils:BuglyPost()                <span class="hljs-comment">-- 上报错误</span>
+Utils:SafeLoadTable()            <span class="hljs-comment">-- 安全加载表格</span>
+Utils:TableInsertIf()            <span class="hljs-comment">-- 条件插入</span>
+
+// eng - 引擎接口
+eng.json.EncodeJson()
+eng.json.DecodeJson()
+eng.SaveTable()
+eng.GetCachePath()
+eng.GetAppVersionByPlatform()
+eng.GetTimeZone()
+eng.GetOpenUdid()
+
+// GameTimer
+GameTimer:ServerTime()
+GameTimer:ServerTimeSec()
+GameTimer:RegisterEventTimer()
+
+// ResourceMgr
+ResourceMgr:GetInstance()
+ResourceMgr:Destroy()
+ResourceMgr:Load()
+
+// 其他全局变量
+g_CurLanguage                    <span class="hljs-comment">-- 当前语言</span>
+g_UseLGIM                        <span class="hljs-comment">-- 是否使用LGIM</span>
+GameRoot_Platform                <span class="hljs-comment">-- 平台</span>
+GameRoot_Channel                 <span class="hljs-comment">-- 渠道</span>
+GameRoot_IsEditor                <span class="hljs-comment">-- 是否编辑器</span>
+GameRoot_PlatformWebGL           <span class="hljs-comment">-- 是否WebGL</span>
+GameRoot_UseLimPC                <span class="hljs-comment">-- 是否PC</span>
+</div></code></pre>
+<hr>
+<h2 id="6-c-%E6%A1%A5%E6%8E%A5%E4%BE%9D%E8%B5%96">6. C# 桥接依赖</h2>
+<pre class="hljs"><code><div>// LGIMHandler - C# 网络模块
+LGIMHandler.LGIMEncryptInit()
+LGIMHandler:Init()
+LGIMHandler:SendMessage()
+
+// CSLGIMHelper - C# IM 助手
+CSLGIMHelper
+
+// NetEaseRTCHelper - 网易云信
+NetEaseRTCHelper:Init()
+NetEaseRTCHelper:JoinChannel()
+NetEaseRTCHelper:LeaveChannel()
+
+// WebGLSdk
+WebGLSdk.isPc
+
+// SDKInterface
+SDKInterface.userInfo.appToken
+SDKInterface.userInfo.appUid
+SDKInterface.APPDeviceInfo.GameID
+SDKInterface.APPDeviceInfo.AppID
+
+// extHttp - HTTP 请求
+extHttp:CreateHttpRequest()
+
+// CSInputMgr - 输入管理
+CSInputMgr.IsTouchUIGiven()
+</div></code></pre>
+<hr>
+<h2 id="%F0%9F%93%8A-%E4%BE%9D%E8%B5%96%E7%BB%9F%E8%AE%A1">📊 依赖统计</h2>
+<table>
+<thead>
+<tr>
+<th>依赖类型</th>
+<th>数量</th>
+<th>复用性</th>
+<th>问题程度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>游戏业务Handler</td>
+<td>20+</td>
+<td>❌ 0%</td>
+<td>🔥🔥🔥 极高</td>
+</tr>
+<tr>
+<td>LilithChatSDKHandler</td>
+<td>40+ 调用</td>
+<td>❌ 0%</td>
+<td>🔥🔥🔥 极高</td>
+</tr>
+<tr>
+<td>Unity 组件</td>
+<td>30+</td>
+<td>✅ 100%</td>
+<td>✅ 无问题</td>
+</tr>
+<tr>
+<td>UIObjectManager</td>
+<td>30+ UI</td>
+<td>⚠️ 50%</td>
+<td>🔥🔥 高</td>
+</tr>
+<tr>
+<td>EventDispatcher</td>
+<td>50+ 事件</td>
+<td>⚠️ 30%</td>
+<td>🔥🔥 高</td>
+</tr>
+<tr>
+<td>Utils 工具类</td>
+<td>20+ 方法</td>
+<td>⚠️ 60%</td>
+<td>🔥 中等</td>
+</tr>
+<tr>
+<td>C# 桥接</td>
+<td>10+</td>
+<td>✅ 90%</td>
+<td>✅ 低</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%F0%9F%92%A5-%E5%89%8D-5-%E5%90%8D%E4%BE%9D%E8%B5%96">💥 前 5 名依赖</h2>
+<h3 id="%F0%9F%A5%87-%E7%AC%AC1%E5%90%8Dlilithchatsdkhandler">🥇 第1名：LilithChatSDKHandler</h3>
+<ul>
+<li><strong>问题</strong>：40+ 次调用</li>
+<li><strong>影响</strong>：新项目必须实现相同的频道体系</li>
+<li><strong>建议</strong>：抽象为 IChannelProvider 接口</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%A5%88-%E7%AC%AC2%E5%90%8Duserhandler">🥈 第2名：UserHandler</h3>
+<ul>
+<li><strong>问题</strong>：60+ 次调用，散布在 15+ 文件</li>
+<li><strong>影响</strong>：新项目必须实现完全相同的方法名</li>
+<li><strong>建议</strong>：抽象为 IUserProvider 接口</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%A5%89-%E7%AC%AC3%E5%90%8Deventdispatcher">🥉 第3名：EventDispatcher</h3>
+<ul>
+<li><strong>问题</strong>：115+ 次调用，50+ 种事件类型</li>
+<li><strong>影响</strong>：事件名称硬编码，不同项目事件系统不同</li>
+<li><strong>建议</strong>：抽象为 IEventBus 接口</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%8F%85-%E7%AC%AC4%E5%90%8Dalliancehandler">🏅 第4名：AllianceHandler</h3>
+<ul>
+<li><strong>问题</strong>：20+ 次调用，联盟系统各游戏差异大</li>
+<li><strong>影响</strong>：非联盟类游戏无法使用</li>
+<li><strong>建议</strong>：抽象为 IAllianceProvider 接口（可选）</li>
+</ul>
+<hr>
+<h3 id="%F0%9F%8F%85-%E7%AC%AC5%E5%90%8Davatarhandler">🏅 第5名：AvatarHandler</h3>
+<ul>
+<li><strong>问题</strong>：15+ 次调用，头像管理各游戏不同</li>
+<li><strong>影响</strong>：新项目需要实现相同的头像系统</li>
+<li><strong>建议</strong>：抽象为 IAvatarProvider 接口</li>
+</ul>
+<hr>
+<h2 id="%F0%9F%8E%AF-%E5%BB%BA%E8%AE%AE%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E6%A1%88">🎯 建议：依赖注入方案</h2>
+<pre class="hljs"><code><div><span class="hljs-comment">-- 定义接口</span>
+ILGIMProvider = {
+    IUserProvider = {...},        <span class="hljs-comment">-- 用户信息</span>
+    IChannelProvider = {...},     <span class="hljs-comment">-- 频道管理</span>
+    IAllianceProvider = {...},    <span class="hljs-comment">-- 联盟信息（可选）</span>
+    IAvatarProvider = {...},      <span class="hljs-comment">-- 头像管理</span>
+    IEventBus = {...},            <span class="hljs-comment">-- 事件系统</span>
+    IUIManager = {...},           <span class="hljs-comment">-- UI管理</span>
+}
+
+<span class="hljs-comment">-- 注入依赖</span>
+LimHelperLua:Initialize({
+    userProvider = RokUserProvider,
+    channelProvider = RokChannelProvider,
+    eventBus = EventDispatcher,
+    <span class="hljs-comment">-- ...</span>
+})
+
+<span class="hljs-comment">-- 使用 Provider</span>
+<span class="hljs-keyword">local</span> playerId = self.userProvider:GetPlayerId()
+<span class="hljs-comment">-- 而不是直接调用 UserHandler:GetPlayerId()</span>
+</div></code></pre>
+<hr>
+
+</body>
+</html>
