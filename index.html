@@ -734,30 +734,6 @@ CSInputMgr.IsTouchUIGiven()
 <li><strong>建议</strong>：抽象为 IAvatarProvider 接口</li>
 </ul>
 <hr>
-<h2 id="%F0%9F%8E%AF-%E5%BB%BA%E8%AE%AE%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E6%96%B9%E6%A1%88">🎯 建议：依赖注入方案</h2>
-<pre class="hljs"><code><div><span class="hljs-comment">-- 定义接口</span>
-ILGIMProvider = {
-    IUserProvider = {...},        <span class="hljs-comment">-- 用户信息</span>
-    IChannelProvider = {...},     <span class="hljs-comment">-- 频道管理</span>
-    IAllianceProvider = {...},    <span class="hljs-comment">-- 联盟信息（可选）</span>
-    IAvatarProvider = {...},      <span class="hljs-comment">-- 头像管理</span>
-    IEventBus = {...},            <span class="hljs-comment">-- 事件系统</span>
-    IUIManager = {...},           <span class="hljs-comment">-- UI管理</span>
-}
-
-<span class="hljs-comment">-- 注入依赖</span>
-LimHelperLua:Initialize({
-    userProvider = RokUserProvider,
-    channelProvider = RokChannelProvider,
-    eventBus = EventDispatcher,
-    <span class="hljs-comment">-- ...</span>
-})
-
-<span class="hljs-comment">-- 使用 Provider</span>
-<span class="hljs-keyword">local</span> playerId = self.userProvider:GetPlayerId()
-<span class="hljs-comment">-- 而不是直接调用 UserHandler:GetPlayerId()</span>
-</div></code></pre>
-<hr>
 
 </body>
 </html>
