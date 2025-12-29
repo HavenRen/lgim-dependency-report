@@ -365,8 +365,8 @@ code {
           : 'default'
     });
   </script>
-<h1 id="%F0%9F%98%A4-lgim-%E5%A4%96%E9%83%A8%E4%BE%9D%E8%B5%96%E5%85%A8%E6%99%AF%E5%9B%BE">😤 LGIM 外部依赖全景图</h1>
-<h2 id="1-%E6%B8%B8%E6%88%8F%E4%B8%9A%E5%8A%A1-handler-%E4%BE%9D%E8%B5%96%E6%9C%80%E5%A4%B4%E7%96%BC%E7%9A%84%E9%83%A8%E5%88%86">1. 游戏业务 Handler 依赖（最头疼的部分）</h2>
+<h1 id="lgim-%E5%A4%96%E9%83%A8%E4%BE%9D%E8%B5%96%E5%85%A8%E6%99%AF%E5%9B%BE">LGIM 外部依赖全景图</h1>
+<h2 id="1-%E6%B8%B8%E6%88%8F%E4%B8%9A%E5%8A%A1-handler-%E4%BE%9D%E8%B5%96">1. 游戏业务 Handler 依赖</h2>
 <h3 id="1-userhandler---%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF">(1) UserHandler - 用户信息</h3>
 <p><strong>被调用 60+ 次</strong> -- 在 LimHelper 层大量调用</p>
 <pre class="hljs"><code><div>UserHandler:GetPlayerId()           <span class="hljs-comment">-- 获取玩家ID (40+次)</span>
